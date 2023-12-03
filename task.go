@@ -39,28 +39,32 @@ package main
 
 import "fmt"
 
-func FindTheBrokenOne(buildTime int) string {
-	if buildTime > 3 {
-		return "hash"
+type Commit struct {
+	Hash      string
+	BuildTime int
+}
+
+func FindTheBrokenOne(commits []Commit, thresholdTime int) string {
+	for _, commit := range commits {
+		if commit.BuildTime >= thresholdTime {
+			return commit.Hash
+		}
 	}
 	return ""
 }
 
 func main() {
-	// Укажите тип переменной commits
-	commits := []map[string]interface{}{
-		{"hash": "654ec593", "buildTime": 3},
-		{"hash": "7ed9a3d6", "buildTime": 5},
-		{"hash": "20c1be38", "buildTime": 7},
-		{"hash": "6d9eb971", "buildTime": 9},
-		{"hash": "4ed905e2", "buildTime": 10},
+	commits := []Commit{
+		{Hash: "654ec593", BuildTime: 3},
+		{Hash: "7ed9a3d6", BuildTime: 5},
+		{Hash: "20c1be38", BuildTime: 7},
+		{Hash: "6d9eb971", BuildTime: 9},
+		{Hash: "4ed905e2", BuildTime: 10},
 	}
 
-	for _, entry := range commits {
-		result := FindTheBrokenOne(entry["buildTime"].(int))
-		if result != "" {
-			fmt.Println(entry["hash"])
-			break
-		}
-	}
+	thresholdTime := 4
+
+	res := FindTheBrokenOne(commits, thresholdTime)
+
+	fmt.Println(res)
 }
