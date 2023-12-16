@@ -53,13 +53,80 @@ func FindTheBrokenOne(commits []Commit, thresholdTime int) string {
 	return ""
 }
 
+func quicksort(commits []Commit) []Commit {
+
+	if len(commits) <= 1 {
+		return commits
+	}
+
+	pivot := commits[len(commits)/2]
+
+	var left, right, equal []Commit
+
+	for _, value := range commits {
+
+		switch {
+		case value.BuildTime < pivot.BuildTime:
+			left = append(left, value)
+		case value.BuildTime == pivot.BuildTime:
+			equal = append(equal, value)
+		case value.BuildTime > pivot.BuildTime:
+			right = append(right, value)
+		}
+
+	}
+
+	return append(append(quicksort(left), equal...), quicksort(right)...)
+
+}
+
+func binarySearchIsSorted(commits []Commit) bool {
+	low, high := 0, len(commits)-1
+
+	for low < high {
+		mid := (low + high) / 2
+		if commits[mid].BuildTime > commits[mid+1].BuildTime {
+			return false
+		}
+		if commits[mid].BuildTime < commits[mid-1].BuildTime {
+			return false
+		}
+
+		if commits[mid].BuildTime > commits[low].BuildTime {
+			low = mid + 1
+		} else {
+			high = mid - 1
+		}
+	}
+
+	return true
+}
+
 func main() {
 	commits := []Commit{
-		{Hash: "654ec593", BuildTime: 3},
+		{Hash: "654ec593", BuildTime: 112},
 		{Hash: "7ed9a3d6", BuildTime: 5},
 		{Hash: "20c1be38", BuildTime: 7},
 		{Hash: "6d9eb971", BuildTime: 9},
 		{Hash: "4ed905e2", BuildTime: 10},
+	}
+
+	if len(commits) < 0 || len(commits) > 1000000 {
+		fmt.Println("Некорректная длина среза commits.")
+		return
+	}
+
+	sortCom := quicksort(commits)
+
+	if sortCom[0].BuildTime < 1 {
+		fmt.Println("Неудовлетворяет условию commits[i+1].buildTime >= commits[i].buildTime >= 0")
+		return
+	}
+
+	if !binarySearchIsSorted(commits) {
+		fmt.Println("Неудовлетворяет условию commits[i+1].buildTime >= commits[i].buildTime >= 0")
+
+		return
 	}
 
 	thresholdTime := 4
