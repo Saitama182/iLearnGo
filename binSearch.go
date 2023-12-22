@@ -20,6 +20,7 @@ func main() {
 	for low <= high {
 		mid = (low + high) / 2
 		guess = arr[mid]
+		fmt.Println("Середина:", mid)
 
 		if guess == item {
 			fmt.Println("Element found at index:", mid)
@@ -29,9 +30,11 @@ func main() {
 		} else if guess > item {
 			high = mid - 1
 			count++
+			fmt.Println("Середина:", mid)
 		} else {
 			low = mid + 1
 			count++
+			fmt.Println("Середина:", mid)
 		}
 	}
 
